@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - `sync_wedge` use existing synchronizer. This defines a single place where a tech-specific synchronizer can be defined.
+- Add `$onehot0` assertion in one-hot to bin
 
 ## 1.10.0 - 2018-12-18
 
