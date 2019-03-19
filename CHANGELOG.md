@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+### Added
+
+- Add priority arbiter
+
+### Changed
+- Add priority arbiter implementation
+
 ## 1.11.0 - 2019-03-20
 
 ### Added
