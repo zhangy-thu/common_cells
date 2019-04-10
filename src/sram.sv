@@ -12,35 +12,50 @@
 // Description: SRAM Behavioral Model
 
 module sram #(
-    int unsigned DATA_WIDTH = 64,
-    int unsigned NUM_WORDS  = 1024
+    parameter int unsigned DATA_WIDTH = 64,
+    parameter int unsigned NUM_WORDS  = 1024,
+    parameter bit OUT_REGS            = 0, // enables output registers in FPGA macro (read lat = 2)
+    parameter int SIM_INIT            = 2
 )(
    input  logic                          clk_i,
+   input  logic                          rst_ni,
 
    input  logic                          req_i,
    input  logic                          we_i,
    input  logic [$clog2(NUM_WORDS)-1:0]  addr_i,
    input  logic [DATA_WIDTH-1:0]         wdata_i,
-   input  logic [DATA_WIDTH-1:0]         be_i,
+   input  logic [(DATA_WIDTH+7)/8-1:0]   be_i,
    output logic [DATA_WIDTH-1:0]         rdata_o
 );
     localparam ADDR_WIDTH = $clog2(NUM_WORDS);
 
     logic [DATA_WIDTH-1:0] ram [NUM_WORDS-1:0];
-    logic [ADDR_WIDTH-1:0] raddr_q;
+    logic [ADDR_WIDTH-1:0] raddr_q, raddr_qq;
 
     // 1. randomize array
     // 2. randomize output when no request is active
-    always_ff @(posedge clk_i) begin
-        if (req_i) begin
-            if (!we_i)
+    always_ff @(posedge clk_i, negedge rst_ni) begin
+        if (~rst_ni) begin
+          for (int i = 0; i < NUM_WORDS; i++) ram[i] <= '0;
+        end else begin
+          if (req_i) begin
+              if (!we_i) begin
                 raddr_q <= addr_i;
-            else
-            for (int i = 0; i < DATA_WIDTH; i++)
-                if (be_i[i]) ram[addr_i][i] <= wdata_i[i];
+              end else begin
+                for (int i = 0; i < (DATA_WIDTH+7)/8; i++) begin
+                  if (be_i[i]) ram[addr_i][i * 8 +: 8] <= wdata_i[i * 8 +: 8];
+                end
+              end
+          end
         end
     end
 
-    assign rdata_o = ram[raddr_q];
+    if (OUT_REGS) begin
+      always_ff @(posedge clk_i) begin : proc_
+        rdata_o <= ram[raddr_q];
+      end
+    end else begin
+      assign rdata_o = ram[raddr_q];
+    end
 
 endmodule
