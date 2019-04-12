@@ -12,10 +12,10 @@
 /// stream handshakes. Selection is based on supplied address
 
 module stream_addr_demux #(
-  parameter unsigned integer NrOutput     = 0,
-  parameter unsigned integer AddressWidth = 0,
-  parameter unsigned integer DefaultSlave = 0,
-  parameter unsigned integer NrRules      = 1 // Routing rules
+  parameter int unsigned NrOutput     = 0,
+  parameter int unsigned AddressWidth = 0,
+  parameter int unsigned DefaultSlave = 0,
+  parameter int unsigned NrRules      = 1, // Routing rules
   /// Dependent parameters, DO NOT OVERRIDE!
   localparam integer LogNrOutput = $clog2(NrOutput)
 ) (
@@ -54,7 +54,7 @@ module stream_addr_demux #(
     .inp_ready_o,
     .oup_sel_i    ( slave_select ),
     .oup_valid_o,
-    .oup_ready_i,
+    .oup_ready_i
   );
 
 endmodule
