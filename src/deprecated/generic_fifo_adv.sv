@@ -68,7 +68,7 @@ module generic_fifo_adv
    end
    // synopsys translate_on
    
-`ifndef PULP_FPGA_EMUL
+`ifndef PULP_FPGA
    cluster_clock_gating cg_cell
      (
       .clk_i     ( clk         ),

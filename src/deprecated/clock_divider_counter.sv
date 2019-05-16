@@ -162,7 +162,7 @@ module clock_divider_counter
         .clk_o(clk_inv)
     );
 
-`ifndef PULP_FPGA_EMUL
+`ifndef PULP_FPGA
  `ifdef PULP_DFT
    pulp_clock_mux2 clk_muxinv_i
      (
