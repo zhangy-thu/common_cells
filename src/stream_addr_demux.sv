@@ -9,7 +9,7 @@
 // specific language governing permissions and limitations under the License.
 
 /// Stream demultiplexer: Connects the input stream (valid-ready) handshake to one of `N_OUP` output
-/// stream handshakes. Selection is based on supplied address
+/// stream handshakes. Selection is based on supplied address.
 
 module stream_addr_demux #(
   parameter int unsigned NrOutput     = 0,
@@ -41,10 +41,13 @@ module stream_addr_demux #(
 
     for (int i = 0; i < NrRules; i++) begin : gen_addr_decoder
       addr_match[i] = (addr_base_i[i] & addr_mask_i[i]) == (inp_addr_i & addr_mask_i[i]);
+      // address regions should be mutual exclusive, hence we can simplify the address selection
+      // to use an or-tree.
       slave_select |= addr_match[i] ? addr_slave_i[i] : '0;
     end
 
-    if (slave_select == 0) slave_select = DefaultSlave;
+    // if no address matches, select default slave
+    if (!(|addr_match)) slave_select = DefaultSlave;
   end
 
   stream_demux #(
