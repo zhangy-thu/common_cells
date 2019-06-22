@@ -28,10 +28,14 @@ module stream_demux #(
   input  logic  [N_OUP-1:0]     oup_ready_i
 );
 
-  always_comb begin
-    oup_valid_o = '0;
-    oup_valid_o[oup_sel_i] = inp_valid_i;
+  if (N_OUP == 1) begin
+    assign oup_valid_o = inp_valid_i;
+    assign inp_ready_o = oup_ready_i;
+  end else begin
+    always_comb begin
+      oup_valid_o = '0;
+      oup_valid_o[oup_sel_i] = inp_valid_i;
+    end
+    assign inp_ready_o = oup_ready_i[oup_sel_i];
   end
-  assign inp_ready_o = oup_ready_i[oup_sel_i];
-
 endmodule
